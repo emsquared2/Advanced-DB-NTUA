@@ -1,8 +1,11 @@
-from pyspark.sql.functions import year, month, count, desc, row_number, col, collect_list, explode
+from pyspark.sql.functions import year, month, count, desc, row_number, col
 from pyspark.sql.window import Window
 from import_data import import_crime_data
+from SparkSession import create_spark_session
 
-crime_df = import_crime_data()
+spark = create_spark_session("Top 3 months with the highest number of recorded crimes, in LA, per Year - DataFrame API")
+
+crime_df = import_crime_data(spark)
 
 # Create new year & month column
 crime_df = crime_df.withColumn('year', year(crime_df["DATE OCC"])) \
@@ -24,5 +27,6 @@ top3_months = ranked_data.filter(col("#") <= 3)
 top3_months.show()
 
 # Saves output to hdfs
-top3_months.write.csv("./output.csv", header=True, mode="overwrite")
+top3_months.write.csv("./query1-DF_output.csv", header=True, mode="overwrite")
 
+spark.stop()
