@@ -1,12 +1,7 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StructField, StructType, IntegerType, DoubleType, DateType, StringType, TimestampType
-from pyspark.sql.functions import col, to_date
+from pyspark.sql.types import StructField, StructType, IntegerType, DoubleType, StringType
+from pyspark.sql.functions import to_date
 
-def import_crime_data():
-    spark = SparkSession \
-        .builder \
-        .appName("Import crime data 2010 - present") \
-        .getOrCreate()
+def import_crime_data(spark):
 
     crime_schema = StructType([
         StructField("DR_NO", StringType()),
