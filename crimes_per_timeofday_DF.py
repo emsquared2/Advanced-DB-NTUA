@@ -4,7 +4,7 @@ from import_data import import_crime_data
 from SparkSession import create_spark_session
 
 
-spark = create_spark_session("Crime Rates Across Daytime Segments")
+spark = create_spark_session("Crime Rates Across Daytime Segments - DataFrame API")
 
 crime_df = import_crime_data(spark)
 
@@ -15,7 +15,7 @@ def daytime_segment(time):
         return 'MORNING'
     elif 12 <= hours < 16:
         return 'AFTERNOON'
-    elif 17 <= hours < 21:
+    elif 16 <= hours < 21:
         return 'EVENING'
     else:
         return 'NIGHT'
