@@ -1,5 +1,6 @@
 from pyspark.sql.types import StructField, StructType, IntegerType, DoubleType, StringType
 from pyspark.sql.functions import to_date
+import csv
 
 def import_crime_data(spark):
 
@@ -43,5 +44,25 @@ def import_crime_data(spark):
     # transformation from string type (csv column) to DateType
     crime_df = crime_df.withColumn("Date Rptd", to_date("Date Rptd", "MM/dd/yyyy hh:mm:ss a"))
     crime_df = crime_df.withColumn("DATE OCC", to_date("DATE OCC", "MM/dd/yyyy hh:mm:ss a"))
-
+    
     return crime_df
+
+def import_crime_data_rdd(spark):
+    # Use csv parser so that each cell is parsed as an item inside of the RDD
+    # We didnt use simple split as it caused problem with the cell contents that contained comma
+    parse_csv = lambda line: next(csv.reader([line]))
+
+    crime_rdd1 = spark.textFile("hdfs://okeanos-master:54310/user/user/advDB_LACrimes/crime-data/crime-data-from-2010-to-2019.csv").map(lambda x: parse_csv(x))
+    # Filter the headers
+    header1 = crime_rdd1.take(1)[0]
+    crime_rdd1 = crime_rdd1.filter(lambda line: line != header1)
+
+    crime_rdd2 = spark.textFile("hdfs://okeanos-master:54310/user/user/advDB_LACrimes/crime-data/crime-data-from-2020-to-present.csv").map(lambda x: parse_csv(x)) 
+    # Filter the headers
+    header2 = crime_rdd2.take(1)[0]
+    crime_rdd2 = crime_rdd2.filter(lambda line: line != header2)
+
+    # Make a single rdd for crime data from 2010 to present
+    crime_rdd = crime_rdd1.union(crime_rdd2)
+
+    return crime_rdd
