@@ -1,5 +1,5 @@
 from pyspark.sql.types import StructField, StructType, IntegerType, DoubleType, StringType
-from pyspark.sql.functions import to_date
+from pyspark.sql.functions import to_date, regexp_replace, col, split
 import csv
 
 def import_crime_data(spark):
@@ -66,3 +66,30 @@ def import_crime_data_rdd(spark):
     crime_rdd = crime_rdd1.union(crime_rdd2)
 
     return crime_rdd
+
+
+def import_income_data(spark):
+    income_schema = StructType([
+    StructField("Zip Code", StringType()),
+    StructField("Community", StringType()),
+    StructField("Estimated Median Income", StringType())
+    ])
+
+    income_df = spark.read.csv("hdfs://okeanos-master:54310/user/user/advDB_LACrimes/income-data/LA_income_2015.csv", header=True, schema=income_schema) 
+
+    income_df = income_df.withColumn('Estimated Median Income', (regexp_replace(col('Estimated Median Income'), '[\$,]', '')).cast('int'))
+
+    return income_df
+
+def import_revgeocoding_data(spark):
+    revgeocoding_schema = StructType([
+        StructField("LAT", DoubleType()),
+        StructField("LON", DoubleType()),
+        StructField("ZIPcode", StringType())
+    ])
+
+    revgeocoding_df = spark.read.csv("hdfs://okeanos-master:54310/user/user/advDB_LACrimes/revgecoding.csv", header=True, schema=revgeocoding_schema) 
+
+    revgeocoding_df = revgeocoding_df.withColumn("ZIPcode", split(col("ZIPcode"), "-").getItem(0))
+
+    return revgeocoding_df
