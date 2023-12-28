@@ -93,3 +93,17 @@ def import_revgeocoding_data(spark):
     revgeocoding_df = revgeocoding_df.withColumn("ZIPcode", split(col("ZIPcode"), "-").getItem(0))
 
     return revgeocoding_df
+
+def import_police_stations_data(spark):
+    police_stations_schema = StructType([
+        StructField("X", DoubleType()),
+        StructField("Y", DoubleType()),
+        StructField("FID", IntegerType()),
+        StructField("DIVISION", StringType()), 
+        StructField("LOCATION", StringType()), 
+        StructField("PREC", IntegerType())
+    ])
+
+    police_stations_df = spark.read.csv("hdfs://okeanos-master:54310/user/user/advDB_LACrimes/police-station-data/LAPD_Police_Stations.csv", header=True, schema=police_stations_schema) 
+
+    return police_stations_df
