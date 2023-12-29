@@ -34,7 +34,7 @@ firearms_crimes_query = \
 firearms_crimes_data = spark.sql(firearms_crimes_query)
 firearms_crimes_data.createOrReplaceTempView("firearm_crimes")
 
-# Join firearm crimes and police stastions using PREC/AREA 
+# Join firearm crimes and police stations using PREC/AREA 
 firearms_crimes_police_stations_join_query = \
     "SELECT fc.DR_NO, fc.AREA, fc.year, fc.`Weapon Used Cd`, fc.LAT, fc.LON, ps.Y as PS_LAT, ps.X as PS_LON, \
         get_distance(fc.LAT, fc.LON, PS_LAT, PS_LON) as distance \
