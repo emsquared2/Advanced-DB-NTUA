@@ -2,14 +2,13 @@
 
 # Function to run the Spark job using spark-submit
 run_spark_job() {
-    py_file_options="--py-files ./utils/import_data.py,./utils/SparkSession.py"
+    py_file_options="--py-files ./utils/import_data.py,./utils/SparkSession.py,./utils/calculate_distance.py,./utils/geopy.zip"
 
     api_type=$1
     mode=$2
     
     # Check if the module exists
-    #### to be changed
-    #module_name=""
+    module_name="./query4/crimes_and_distance_per_station_${api_type}.py"
     if [ -e "$module_name" ]; then
         # Build the spark-submit command based on the specified mode
         if [ "$mode" == "client" ]; then
