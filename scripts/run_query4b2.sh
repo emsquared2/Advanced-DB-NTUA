@@ -27,7 +27,7 @@ run_spark_job() {
 # Function to print usage information
 print_usage() {
     echo "Usage: $0 <API_TYPE> <MODE>"
-    echo "API_TYPE: Specify the type of API (DF, SQL, RDD) used in the filename."
+    echo "API_TYPE: Specify the type of API (DF, SQL) used in the filename."
     echo "MODE: Specify the mode in which the job will be run (client or cluster)."
 }
 

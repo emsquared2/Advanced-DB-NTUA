@@ -2,7 +2,7 @@
 
 # Function to run the Spark job using spark-submit
 run_spark_job() {
-    py_file_options="--py-files ./utils/import_data.py,./utils/SparkSession.py,./utils/calculate_distance.py,./utils/geopy.zip"
+    py_file_options="--py-files ./utils/import_data.py,./utils/SparkSession.py,./utils/calculate_distance.py"
 
     api_type=$1
     mode=$2
@@ -27,7 +27,7 @@ run_spark_job() {
 # Function to print usage information
 print_usage() {
     echo "Usage: $0 <API_TYPE> <MODE>"
-    echo "API_TYPE: Specify the type of API (DF, SQL, RDD) used in the filename."
+    echo "API_TYPE: Specify the type of API (DF, SQL) used in the filename."
     echo "MODE: Specify the mode in which the job will be run (client or cluster)."
 }
 
