@@ -28,7 +28,8 @@ firearm_crimes_query = \
         LAT, \
         LON \
     FROM crimes \
-    WHERE `Weapon Used Cd` LIKE '1__'\
+    WHERE `Weapon Used Cd` LIKE '1__' AND \
+          (LAT <> 0 AND LON <> 0) \
     ORDER BY DR_NO"
 
 firearm_crimes_data = spark.sql(firearm_crimes_query)

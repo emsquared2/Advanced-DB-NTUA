@@ -28,7 +28,8 @@ firearms_crimes_query = \
         LAT, \
         LON \
     FROM crimes \
-    WHERE `Weapon Used Cd` LIKE '1__'\
+    WHERE `Weapon Used Cd` LIKE '1__' AND \
+          (LAT <> 0 AND LON <> 0) \
     ORDER BY DR_NO"
 
 firearms_crimes_data = spark.sql(firearms_crimes_query)
@@ -40,8 +41,7 @@ firearms_crimes_police_stations_join_query = \
         get_distance(fc.LAT, fc.LON, PS_LAT, PS_LON) as distance \
     FROM police_stations ps \
     INNER JOIN firearm_crimes fc ON \
-    ps.PREC = fc.AREA \
-    ORDER BY fc.DR_NO"
+    ps.PREC = fc.AREA"
 
 firearms_crimes_police_stations_data = spark.sql(firearms_crimes_police_stations_join_query)
 firearms_crimes_police_stations_data.createOrReplaceTempView("firearm_crimes_police_stations")
