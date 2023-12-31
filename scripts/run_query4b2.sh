@@ -2,7 +2,7 @@
 
 # Function to run the Spark job using spark-submit
 run_spark_job() {
-    py_file_options="--py-files ./utils/import_data.py,./utils/SparkSession.py,./utils/calculate_distance.py,./utils/geopy.zip"
+    py_file_options="--py-files ./utils/import_data.py,./utils/SparkSession.py,./utils/calculate_distance.py"
 
     api_type=$1
     mode=$2

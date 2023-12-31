@@ -1,14 +1,15 @@
 from import_data import import_crime_data, import_police_stations_data
 from SparkSession import create_spark_session
 from pyspark.sql.functions import udf
+from pyspark.sql.types import DoubleType
 from calculate_distance import get_distance
 
 # Create Spark session
 spark = create_spark_session("Total Firearm Crimes and Average Distance (from Nearest Police Station) per Year - SQL API")
 
 # Register UDF (get_distance)
-get_distance_udf = udf(get_distance)
-spark.udf.register("get_distance", get_distance_udf)
+get_distance_udf = udf(get_distance, DoubleType())
+spark.udf.register("get_distance", get_distance, DoubleType())
 
 # Import data
 crime_df = import_crime_data(spark)
@@ -58,7 +59,7 @@ firearm_crimes_police_stations_data.createOrReplaceTempView("firearm_crimes_poli
 
 # Find average distance and total crimes for each year
 average_distance_and_total_crimes_per_year_query = \
-    "SELECT year, AVG(distance) as average_distance, COUNT(*) AS total_crimes \
+    "SELECT year, ROUND(AVG(distance), 3) || ' km' as average_distance, COUNT(*) AS total_crimes \
     FROM firearm_crimes_police_stations \
     GROUP BY year \
     ORDER BY year"

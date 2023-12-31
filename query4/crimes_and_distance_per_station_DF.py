@@ -1,6 +1,7 @@
 from import_data import import_crime_data, import_police_stations_data
 from SparkSession import create_spark_session
-from pyspark.sql.functions import udf, avg, count
+from pyspark.sql.functions import udf, avg, count, concat, lit, round
+from pyspark.sql.types import DoubleType
 from calculate_distance import get_distance
 
 # Create Spark session
@@ -10,7 +11,7 @@ spark = create_spark_session("Total Firearm Crimes and Average Distance per Year
 crime_df = import_crime_data(spark)
 police_stations_df = import_police_stations_data(spark)
 
-get_distance_udf = udf(get_distance)
+get_distance_udf = udf(get_distance, DoubleType())
 
 # Filter Crime Data - Keep crimes involving the use of any form of weapon
 weapon_crimes_df = crime_df.filter((crime_df["Weapon Used Cd"].isNotNull()) & \
@@ -39,12 +40,17 @@ average_distance_and_total_crimes_per_police_station = weapon_crimes_police_stat
                                                             avg("distance").alias("average_distance"), \
                                                             count("*").alias("total_crimes") \
                                                         ) \
-                                                        .orderBy("total_crimes", ascending=False)
+                                                        .withColumn( 
+                                                                "average_distance",
+                                                                concat(round("average_distance", 3).cast("string"), lit(" km"))
+                                                        ) \
+                                                        .orderBy("total_crimes", ascending=False) \
+                                                        .selectExpr("DIVISION as division", "average_distance", "total_crimes")
 
 average_distance_and_total_crimes_per_police_station.show()
 
 # Save output to hdfs
-# average_distance_and_total_crimes_per_police_station.write.csv("./query4b1-DataFrame.csv", header=True, mode="overwrite")
+average_distance_and_total_crimes_per_police_station.write.csv("./query4b1-DataFrame.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()

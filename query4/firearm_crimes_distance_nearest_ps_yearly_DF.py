@@ -1,7 +1,8 @@
 from import_data import import_crime_data, import_police_stations_data
 from SparkSession import create_spark_session
 from pyspark.sql.window import Window
-from pyspark.sql.functions import udf, year, avg, count, col, rank
+from pyspark.sql.functions import udf, year, avg, count, concat, lit, round, rank, col
+from pyspark.sql.types import DoubleType
 from calculate_distance import get_distance
 
 # Create Spark session
@@ -12,7 +13,7 @@ crime_df = import_crime_data(spark)
 police_stations_df = import_police_stations_data(spark)
 
 # Register UDF (get_distance)
-get_distance_udf = udf(get_distance)
+get_distance_udf = udf(get_distance, DoubleType())
 
 window = Window.partitionBy("DR_NO") \
                .orderBy("distance")
@@ -28,19 +29,23 @@ crimes_police_dist_df = filtered_crimes_df.crossJoin(police_stations_df.select("
                                            .filter(col("distance rank") == 1) \
                                            .select("year", "distance")
 
+# Find average distance and total crimes for each year
 avg_dist_nearest_ps_df = crimes_police_dist_df.groupBy("year") \
-                                              .agg( 
-                                                  avg("distance") \
-                                                  .alias("average distance"), \
-                                                  count("*").alias("total crimes")
-                                                  ) \
-                                              .orderBy("year")
-
+                                              .agg(
+                                                  avg("distance").alias("average distance"), \
+                                                  count("*").alias("total crimes") \
+                                               ) \
+                                              .withColumn( 
+                                                  "average_distance",
+                                                  concat(round("average_distance", 3).cast("string"), lit(" km"))
+                                              ) \
+                                              .orderBy("year") \
+                                              .select("year", "average_distance", "total_crimes")
 
 avg_dist_nearest_ps_df.show()
 
 # Save output to hdfs
-avg_dist_nearest_ps_df.write.csv("./query4a2-DF.csv", header=True, mode="overwrite")
+avg_dist_nearest_ps_df.write.csv("./query4a2-DataFrame.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()
