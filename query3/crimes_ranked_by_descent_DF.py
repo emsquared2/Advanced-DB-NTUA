@@ -67,7 +67,7 @@ crimes_ranked_by_descent_df = crimes_income_ZIPcode_df.join( \
 crimes_ranked_by_descent_df.show()
 
 # Save output to HDFS
-# crimes_ranked_by_descent_df.write.csv("./query3-DF_output.csv", header=True, mode="overwrite")
+crimes_ranked_by_descent_df.write.csv("./query3-DF_output.csv", header=True, mode="overwrite")
 
 # Stop Spark session
 spark.stop()

@@ -42,6 +42,6 @@ street_crimes_by_daytime = spark.sql(query)
 street_crimes_by_daytime.show()
 
 # Saves output to hdfs
-street_crimes_by_daytime.write.csv("./query2-SQL.csv", header=True, mode="overwrite")
+street_crimes_by_daytime.write.csv("./query2-SQL_output.csv", header=True, mode="overwrite")
 
 spark.stop()

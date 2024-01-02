@@ -24,7 +24,7 @@ grouped_data = crime_df.groupBy("year", "month") \
 ranked_data = grouped_data.withColumn("#", row_number().over(window))
 top3_months = ranked_data.filter(col("#") <= 3)
 
-top3_months.show()
+top3_months.show(42)
 
 # Saves output to hdfs
 top3_months.write.csv("./query1-DF_output.csv", header=True, mode="overwrite")

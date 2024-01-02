@@ -28,7 +28,7 @@ crime_rdd = crime_rdd.filter(lambda line: line[15] == 'STREET') \
 
 print(crime_rdd.collect())
 
-# Uncomment if you want the output saved in a text file
-# crime_rdd.saveAsTextFile("./query2-RDD.txt")
+# Saves output to hdfs
+crime_rdd.saveAsTextFile("./query2-RDD_output.txt")
 
 sc.stop()

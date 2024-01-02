@@ -67,7 +67,7 @@ average_distance_to_nearest_police_station_and_total_crimes_per_police_station_q
     ORDER BY total_crimes DESC"
 
 average_distance_to_nearest_police_station_and_total_crimes_per_police_station = spark.sql(average_distance_to_nearest_police_station_and_total_crimes_per_police_station_query)
-average_distance_to_nearest_police_station_and_total_crimes_per_police_station.show(10)
+average_distance_to_nearest_police_station_and_total_crimes_per_police_station.show(21)
 
 # Save output to hdfs
 average_distance_to_nearest_police_station_and_total_crimes_per_police_station.write.csv("./query4b2-SQL.csv", header=True, mode="overwrite")

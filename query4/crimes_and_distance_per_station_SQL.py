@@ -54,7 +54,7 @@ average_distance_and_total_crimes_per_police_station_query = \
     ORDER BY total_crimes DESC"
 
 average_distance_and_total_crimes_per_police_station = spark.sql(average_distance_and_total_crimes_per_police_station_query)
-average_distance_and_total_crimes_per_police_station.show()
+average_distance_and_total_crimes_per_police_station.show(21)
 
 # Save output to hdfs
 average_distance_and_total_crimes_per_police_station.write.csv("./query4b1-SQL.csv", header=True, mode="overwrite")

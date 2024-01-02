@@ -94,7 +94,7 @@ crimes_ranked_by_descent = spark.sql(crimes_ranked_by_descent_query)
 crimes_ranked_by_descent.show()
 
 # Save output to hdfs
-crimes_ranked_by_descent_query.write.csv("./query3-SQL.csv", header=True, mode="overwrite")
+crimes_ranked_by_descent_query.write.csv("./query3-SQL_output.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
-spark.stop()
+spark.stop()    
