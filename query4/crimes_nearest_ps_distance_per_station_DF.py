@@ -6,7 +6,7 @@ from pyspark.sql.functions import udf, avg, count, col, rank, desc, concat, lit,
 from calculate_distance import get_distance
 
 # Create Spark session
-spark = create_spark_session("Total Firearm Crimes and Average Distance (from Nearest Police Station) per Year - Dataframe API")
+spark = create_spark_session("Total Weapon Crimes and Average Distance (from Nearest Police Station) per Year - Dataframe API")
 
 # Import data
 crime_df = import_crime_data(spark)
@@ -23,6 +23,7 @@ filtered_crimes_df = crime_df.filter((crime_df["Weapon Used Cd"].isNotNull()) & 
                                      (crime_df["LON"] != 0)) \
                              .select("DR_NO", "LAT", "LON")
 
+# crimes_police_dist_df = filtered_crimes_df.join(police_stations_df.select("DIVISION", "Y", "X").hint("shuffle_hash")) \
 crimes_police_dist_df = filtered_crimes_df.crossJoin(police_stations_df.select("DIVISION", "Y", "X")) \
                                            .withColumn('distance', get_distance_udf("LAT", "LON", "Y", "X")) \
                                            .withColumn("distance rank", rank().over(window)) \
@@ -36,16 +37,17 @@ avg_dist_nearest_ps_df = crimes_police_dist_df.groupBy("DIVISION") \
                                                   count("*").alias("total crimes") \
                                               ) \
                                               .withColumn( 
-                                                "average_distance",
-                                                concat(round("average_distance", 3).cast("string"), lit(" km"))
+                                                "average distance",
+                                                concat(round("average distance", 3).cast("string"), lit(" km"))
                                               ) \
-                                              .orderBy("total_crimes", ascending=False) \
-                                              .selectExpr("DIVISION as division", "average_distance", "total_crimes")
+                                              .orderBy("total crimes", ascending=False) \
+                                              .select("DIVISION", "average distance", "total crimes") \
+                                              .withColumnRenamed("DIVSION", "division")
 
 avg_dist_nearest_ps_df.show()
 
 # Save output to hdfs
-avg_dist_nearest_ps_df.write.csv("./query4b2-DataFrame.csv", header=True, mode="overwrite")
+avg_dist_nearest_ps_df.write.csv("./output/query4/query4b2-DataFrame.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()

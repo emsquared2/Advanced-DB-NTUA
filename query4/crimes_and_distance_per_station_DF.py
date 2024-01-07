@@ -5,7 +5,7 @@ from pyspark.sql.types import DoubleType
 from calculate_distance import get_distance
 
 # Create Spark session
-spark = create_spark_session("Total Firearm Crimes and Average Distance per Year - DataFrame API")
+spark = create_spark_session("Total Weapon Crimes and Average Distance per Year - DataFrame API")
 
 # Import data
 crime_df = import_crime_data(spark)
@@ -24,6 +24,11 @@ weapon_crimes_df = crime_df.filter((crime_df["Weapon Used Cd"].isNotNull()) & \
 # Join weapon crimes and police stations using PREC/AREA
 weapon_crimes_police_stations_df = weapon_crimes_df \
                                     .join( \
+                                        # Comment out to use a specific join strategy (broadcast, merge, shuffle_hash, shuffle_replicate_nl).
+                                        #police_stations_df.hint("broadcast") # we choose to broadcast the smallest dataframe\  
+                                        #police_stations_df.hint("merge") \
+                                        #police_stations_df.hint("shuffle_hash") \
+                                        # police_stations_df.hint("shuffle_replicate_nl") #  not recommended here \ 
                                         police_stations_df \
                                             .withColumnRenamed("Y", "PS_LAT") \
                                             .withColumnRenamed("X", "PS_LON"), \
@@ -50,7 +55,7 @@ average_distance_and_total_crimes_per_police_station = weapon_crimes_police_stat
 average_distance_and_total_crimes_per_police_station.show()
 
 # Save output to hdfs
-average_distance_and_total_crimes_per_police_station.write.csv("./query4b1-DataFrame.csv", header=True, mode="overwrite")
+average_distance_and_total_crimes_per_police_station.write.csv("./output/query4/query4b1-DF.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()

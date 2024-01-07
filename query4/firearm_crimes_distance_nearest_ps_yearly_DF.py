@@ -23,6 +23,7 @@ filtered_crimes_df = crime_df.filter((crime_df["Weapon Used Cd"].like("1__")) & 
                                      (crime_df["LON"] != 0)) \
                              .select("DR_NO", year(crime_df["DATE OCC"]).alias("year"), "LAT", "LON")
 
+# crimes_police_dist_df = filtered_crimes_df.join(police_stations_df.hint("shuffle_replicate_nl").select("Y", "X")) \
 crimes_police_dist_df = filtered_crimes_df.crossJoin(police_stations_df.select("Y", "X")) \
                                            .withColumn('distance', get_distance_udf("LAT", "LON", "Y", "X")) \
                                            .withColumn("distance rank", rank().over(window)) \
@@ -36,16 +37,16 @@ avg_dist_nearest_ps_df = crimes_police_dist_df.groupBy("year") \
                                                   count("*").alias("total crimes") \
                                                ) \
                                               .withColumn( 
-                                                  "average_distance",
-                                                  concat(round("average_distance", 3).cast("string"), lit(" km"))
+                                                  "average distance",
+                                                  concat(round("average distance", 3).cast("string"), lit(" km"))
                                               ) \
                                               .orderBy("year") \
-                                              .select("year", "average_distance", "total_crimes")
+                                              .select("year", "average distance", "total crimes")
 
 avg_dist_nearest_ps_df.show()
 
 # Save output to hdfs
-avg_dist_nearest_ps_df.write.csv("./query4a2-DataFrame.csv", header=True, mode="overwrite")
+avg_dist_nearest_ps_df.write.csv("./output/query4/query4a2-DataFrame.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()
