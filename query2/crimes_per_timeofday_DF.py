@@ -34,6 +34,6 @@ grouped_street_crime_df = street_crime_df.groupBy("DAY SEGMENT").agg(count("*").
 grouped_street_crime_df.show()
 
 # Saves output to hdfs
-grouped_street_crime_df.write.csv("./query2-DF_output.csv", header=True, mode="overwrite")
+grouped_street_crime_df.write.csv("./output/query2/query2-DF.csv", header=True, mode="overwrite")
 
 spark.stop()

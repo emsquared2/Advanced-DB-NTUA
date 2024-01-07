@@ -33,6 +33,6 @@ top3_months = spark.sql(query)
 top3_months.show(42)
 
 # Saves output to hdfs
-top3_months.write.csv("./query1-SQL_output.csv", header=True, mode="overwrite")
+top3_months.write.csv("./output/query1/query1-SQL.csv", header=True, mode="overwrite")
 
 spark.stop()
