@@ -27,6 +27,6 @@ top3_months = ranked_data.filter(col("#") <= 3)
 top3_months.show(42)
 
 # Saves output to hdfs
-top3_months.write.csv("./query1-DF_output.csv", header=True, mode="overwrite")
+top3_months.write.csv("./output/query1/query1-DF.csv", header=True, mode="overwrite")
 
 spark.stop()

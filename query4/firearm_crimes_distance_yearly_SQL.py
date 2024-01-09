@@ -58,7 +58,7 @@ average_distance_and_total_crimes_per_year = spark.sql(average_distance_and_tota
 average_distance_and_total_crimes_per_year.show()
 
 # Save output to hdfs
-average_distance_and_total_crimes_per_year.write.csv("./query4a1-SQL.csv", header=True, mode="overwrite")
+average_distance_and_total_crimes_per_year.write.csv("./output/query4/query4a1-SQL.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()

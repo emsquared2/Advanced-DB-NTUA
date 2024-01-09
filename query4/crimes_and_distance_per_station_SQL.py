@@ -57,7 +57,7 @@ average_distance_and_total_crimes_per_police_station = spark.sql(average_distanc
 average_distance_and_total_crimes_per_police_station.show(21)
 
 # Save output to hdfs
-average_distance_and_total_crimes_per_police_station.write.csv("./query4b1-SQL.csv", header=True, mode="overwrite")
+average_distance_and_total_crimes_per_police_station.write.csv("./output/query4/query4b1-SQL.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()

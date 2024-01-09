@@ -23,6 +23,11 @@ firearms_crimes_df = crime_df.filter((crime_df["Weapon Used Cd"].like("1__")) & 
 # Join firearm crimes and police stations using PREC/AREA
 firearms_crimes_police_stations_df = firearms_crimes_df \
                                         .join( \
+                                            # Comment out to use a specific join strategy (broadcast, merge, shuffle_hash, shuffle_replicate_nl).
+                                            #police_stations_df.hint("broadcast") # we choose to broadcast the smallest dataframe \  
+                                            #police_stations_df.hint("merge") \
+                                            #police_stations_df.hint("shuffle_hash") \
+                                            # police_stations_df.hint("shuffle_replicate_nl") # not recommended here\  
                                             police_stations_df \
                                                 .withColumnRenamed("Y", "PS_LAT") \
                                                 .withColumnRenamed("X", "PS_LON"), \
@@ -50,7 +55,7 @@ average_distance_and_total_crimes_per_year = firearms_crimes_police_stations_df 
 average_distance_and_total_crimes_per_year.show()
 
 # Save output to hdfs
-average_distance_and_total_crimes_per_year.write.csv("./query4a1-DataFrame.csv", header=True, mode="overwrite")
+average_distance_and_total_crimes_per_year.write.csv("./output/query4/query4a1-DataFrame.csv", header=True, mode="overwrite")
 
 # Stop Spark Session
 spark.stop()
