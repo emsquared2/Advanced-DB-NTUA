@@ -1,14 +1,19 @@
 #!/bin/bash
 
+# Get the directory of the script
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+main_dir="$(dirname "$script_dir")"
+cd "$script_dir"
+
 # Function to run the Spark job using spark-submit
 run_spark_job() {
-    py_file_options="--py-files ./utils/import_data.py,./utils/SparkSession.py"
+    py_file_options="--py-files $main_dir/utils/import_data.py,$main_dir/utils/SparkSession.py"
 
     api_type=$1
     mode=$2
-    
+
     # Check if the module exists
-    module_name="./query1/top_crime_months_LA_${api_type}.py"
+    module_name="$main_dir/query1/top_crime_months_LA_${api_type}.py"
     if [ -e "$module_name" ]; then
         # Build the spark-submit command based on the specified mode
         if [ "$mode" == "client" ]; then
