@@ -7,11 +7,17 @@ To replicate our project in your own cluster you need to already have establishe
 - ~okeanos-knossos **VM resources** or other personal VMs
 - **Apache Spark** on your nodes
 - **HDFS** for a distributed file system in your cluster
+- **Python** - 3.10 or later
+- **Java** - openjdk 11 or later
 
 ## Usage
 Under the `query` folders you can find the code for each query implemented. For more information about each query you can find under the `Docs` folder. 
 
 Before using the scripts to run each query with the specified characteristics firstly you have to save the datasets in the HDFS. To do that you can run the following command which downloads the crime data directly to your HDFS:
+
+> **Important!**
+> Change the "okeanos-master:54310" to your HDFS ip address
+
 ```console
 $ curl https://data.lacity.org/api/views/63jg-8b9z/rows.csv?accessType=DOWNLOAD | hadoop fs -put - hdfs://okeanos-master:54310/your/path/crime-data-from-2010-to-2019.csv
 $ curl https://data.lacity.org/api/views/2nrs-mtv8/rows.csv?accessType=DOWNLOAD | hadoop fs -put - hdfs://okeanos-master:54310/your/path/crime-data-from-2020-to-present.csv
@@ -36,6 +42,10 @@ You can save the data wherever you want inside your HDFS but remember to also ch
 107. police_stations_df = spark.read.csv("hdfs://okeanos-master:54310/your/path/LAPD_Police_Stations.csv", header=True, schema=police_stations_schema)
 108.
 ```
+For query 4 you also have to install the geopy package:
+```console
+$ pip install geopy 
+```
 To run one of the queries you run each script like this:
 ```console
 $ ./scripts/run_query1.sh API_TYPE MODE
@@ -55,7 +65,7 @@ For client mode the query output can be seen directly in the console.
 
 For cluster mode on the other hand the output is saved in an output file in the HDFS. To make a local copy you can run the below command:
 ```console
-$ hadoop fs -getmerge hdfs://okeanos-master:54310/query ./desired_filename.txt
+$ hadoop fs -getmerge hdfs://okeanos-master:54310/query-output-name ./desired_filename.txt
 ```
 
 ## Authors
