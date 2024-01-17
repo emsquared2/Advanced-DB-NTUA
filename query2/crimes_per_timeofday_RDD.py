@@ -13,9 +13,9 @@ def daytime_segment(time):
         return 'UNKNOWN'
     if 5 <= hours < 12:
         return 'MORNING'
-    elif 12 <= hours < 16:
+    elif 12 <= hours < 17:
         return 'AFTERNOON'
-    elif 16 <= hours < 21:
+    elif 17 <= hours < 21:
         return 'EVENING'
     else:
         return 'NIGHT'
